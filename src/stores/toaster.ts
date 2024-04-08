@@ -1,4 +1,4 @@
-import { computed, ref, type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export interface Toast {
@@ -12,17 +12,18 @@ type AddOptions = Omit<Toast, "level" | "id">;
 type Level = "success" | "error";
 
 export const useToasterStore = defineStore('toaster', () => {
-  const store: Ref<Map<string, any>> = ref(new Map());
-  const toasts = computed(() => Array.from(store.value));
+  const toasts: Ref<Toast[]> = ref([]);
 
   const addToast = (level: Level, options: AddOptions) => {
     const { content, deltaDelay = 0 } = options;
-    const id = String(Date.now() / Math.random());
+    const   id = String(Date.now() / Math.random());
     const toast = { content, deltaDelay, level, id };
-    store.value.set(id, toast);
+    toasts.value = [...toasts.value, toast];
   };
 
-  const removeToast = (id: string) => store.value.delete(id)
+  const removeToast = (id: string) => {
+    toasts.value = toasts.value.filter(toast => toast.id !== id);
+  }
 
   const successToast = addToast.bind(null, "success");
   const errorToast = addToast.bind(null, "error");

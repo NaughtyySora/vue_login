@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import Toast from "@/components/Toast.vue";
 import { useToasterStore } from "@/stores/toaster";
-const { toasts, removeToast } = useToasterStore();
+const store = useToasterStore();
 </script>
 
 <template>
   <section class="Toaster">
     <Toast 
-      v-for="[key, { content, id, level, deltaDelay = 300 }], idx of toasts" 
+      v-for="{ content, id, level, deltaDelay = 300 }, idx of store.toasts" 
       :deltaDelay="idx * deltaDelay"
-      :onRemove="removeToast(id)"
-      :level="level"
-      :key="key"
+      :level="level" 
+      :key="id"
+      @remove="() => store.removeToast(id)" 
     >
       {{ content }}
     </Toast>

@@ -5,22 +5,24 @@ import { useToasterStore } from "@/stores/toaster";
 import { authApi } from "@/api/auth/api";
 
 const sended = ref(false);
-const { successToast, errorToast } = useToasterStore();
+const store = useToasterStore();
 
 const onSubmit = (e: Event) => {
   const data = new FormData(e.target as HTMLFormElement);
 
   if (!validators.email(data.get("email") as string)) {
-    errorToast({ content: "Invalid Email" });
+    store.errorToast({ content: "Invalid Email" });
     return;
   }
-
-  authApi.forgot(data)
-    .then(() => {
-      successToast({ content: "Request sent !" })
-      sended.value = true;
-    })
-    .catch(() => void errorToast({ content: "Error while send request" }));
+  store.successToast({ content: "Request sent !" });
+  sended.value = true;
+  
+  // authApi.forgot(data)
+  //   .then(() => {
+  //     store.successToast({ content: "Request sent !" })
+  //     sended.value = true;
+  //   })
+  //   .catch(() => void store.errorToast({ content: "Error while send request" }));
 };
 
 </script>

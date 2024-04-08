@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import SignUpForm from "@/components/SignUpForm.vue";
 import SignInForm from "@/components/SignInForm.vue";
+
 const overlayContent = [
 	{
 		title: "Welcome Back!",
@@ -17,9 +18,12 @@ const overlayContent = [
 ];
 
 const overlayClass = ref("");
-const left = computed(() => overlayClass ? "left" : "");
-const right = computed(() => overlayClass ? "" : "right");
-const toggleOverlay = () => void (overlayClass.value = overlayClass ? "" : "active");
+const left = computed(() => overlayClass.value ? "left" : "");
+const right = computed(() => overlayClass.value ? "" : "right");
+
+const toggleOverlay = () => {
+	overlayClass.value = overlayClass.value ? "" : "active";
+};
 
 </script>
 

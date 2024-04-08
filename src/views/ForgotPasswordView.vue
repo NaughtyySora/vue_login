@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import Widget from '@/components/Widget.vue';
+import ForgotForm from '@/components/ForgotForm.vue';
+
 </script>
 
 <template>
-  <Widget />
+  <ForgotForm />
 </template>
 
 

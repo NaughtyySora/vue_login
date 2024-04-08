@@ -4,7 +4,7 @@ import type { Toast } from '@/stores/toaster';
 import { onMounted, ref } from 'vue';
 
 const props = defineProps<Omit<Toast, "id" | "content">>();
-const emit = defineEmits<{ onRemove: [] }>()
+const emit = defineEmits<{ remove: [] }>();
 
 const delay = 5000 + (props?.deltaDelay || 0);
 const fadeTimeOut = ref<() => void>(() => { });
@@ -13,11 +13,11 @@ const toastRef = ref<null | HTMLDivElement>(null);
 onMounted(() => {
   const { set, cancel } = timer(100);
   set(setActive, "add");
+  const cancelRemove = removeToast(delay);
 
-  const cancelRemoveToast = removeToast(delay);
   return () => {
     cancel();
-    cancelRemoveToast();
+    cancelRemove();
   };
 });
 
@@ -27,22 +27,37 @@ const setActive = (method: "add" | "remove") => {
 
 function removeToast(ms: number) {
   const { set, cancel } = timer(ms);
+  const { set: close, cancel: cancelClose } = timer(ms + 300);
 
-  set(() => {
-    setActive("remove");
-    setTimeout(emit.bind(null, "onRemove"), 300);
-  });
+  set(setActive, "remove");
+  close(emit, "remove");
 
-  fadeTimeOut.value = cancel;
-  return cancel;
+  const cancelAll = () => {
+    cancelClose();
+    cancel();
+  };
+
+  fadeTimeOut.value = cancelAll;
+  return cancelAll;
 }
+
+const onClose = () => {
+  setActive("remove");
+  const { set } = timer(300);
+  set(() => emit("remove"));
+};
+
+const setNewTimer = () => {
+  removeToast(delay);
+};
+
 </script>
 
 <template>
-  <div :class="['Toast', level]" ref="toastRef" @mouseenter="fadeTimeOut" @mouseleave="removeToast(delay)">
+  <div :class="['Toast', level]" ref="toastRef" @mouseenter="fadeTimeOut" @mouseleave="setNewTimer">
     <p class="Toast-level">{{ level }}</p>
 
-    <button class="Toast-close" aria-label="close toaster" @click="removeToast(100)" />
+    <button class="Toast-close" aria-label="close toaster" @click="onClose" />
     <slot />
   </div>
 </template>
