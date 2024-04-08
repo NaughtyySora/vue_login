@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import Icon from "./Icon.vue";
 defineProps<{ title: string, buttonTitle: string }>();
-
+defineOptions({
+  inheritAttrs: false
+})
 </script>
 
 <template>
   <div class="Form-container">
-    <form class="Form" :$attrs>
+    <form class="Form" :="$attrs">
       <h2 class="Form-title" v-if="title">{{ title }}</h2>
 
       <div class="Form-socials">
@@ -35,21 +37,6 @@ defineProps<{ title: string, buttonTitle: string }>();
   width: 100%;
   height: 100%;
   padding: 2rem;
-
-  &.SignUp.left,
-  &.SignIn.right {
-    transform: translate(0);
-  }
-
-  &.SignUp {
-    transform: translate(-100%);
-    transition: transform .65s;
-  }
-
-  &.Form.SignIn {
-    transform: translate(100%);
-    transition: transform .65s;
-  }
 
   &-container {
     overflow: hidden;

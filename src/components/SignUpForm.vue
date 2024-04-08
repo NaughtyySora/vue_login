@@ -2,28 +2,29 @@
 import { authApi } from '@/api/auth/api';
 import { bulkValidateForm } from '@/lib/validators';
 import { useToasterStore } from '@/stores/toaster';
+import Form from './Form.vue';
 
 const options = [{ key: "email" }, { key: "password" }, { key: "name" }];
-const { successToast, errorToast } = useToasterStore();
+const store = useToasterStore();
 
 const onSubmit = (e: Event & { currentTarget: HTMLFormElement }) => {
   const data = new FormData(e.currentTarget);
   const isValid = bulkValidateForm({ data, options });
 
   if (!isValid) {
-    errorToast({ content: "Fields are not valid" });
+    store.errorToast({ content: "Fields are not valid" });
     return;
   }
-
-  authApi
-    .singUp(data)
-    .then(() => void successToast({ content: "Sing Up Success!" }))
-    .catch(() => void errorToast({ content: "Sing Up Error" }));
+  store.successToast({ content: "Sing Up Success!" })
+  // authApi
+  //   .singUp(data)
+  //   .then(() => void store.successToast({ content: "Sing Up Success!" }))
+  //   .catch(() => void store.errorToast({ content: "Sing Up Error" }));
 };
 </script>
 
 <template>
-  <Form :$attrs title="Create Account" buttonTitle="Sign Up" class="SignUp" @submit.prevent="onSubmit">
+  <Form title="Create Account" buttonTitle="Sign Up" class="SignUp" @submit.prevent="onSubmit">
     <p class="SignUp-text">or use your email for registration</p>
     <input type="text" placeholder="Name" class="SignUp-name" name="name" />
     <input type="email" placeholder="Email" class="SignUp-email" name="email" />
@@ -31,8 +32,15 @@ const onSubmit = (e: Event & { currentTarget: HTMLFormElement }) => {
   </Form>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .SignUp {
+  transform: translate(-100%);
+  transition: transform .65s;
+
+  &.left {
+    transform: translate(0);
+  }
+
   &-text {
     text-align: center;
     margin-bottom: 0.5rem;

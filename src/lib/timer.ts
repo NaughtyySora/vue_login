@@ -6,8 +6,13 @@ export const timer = (ms: number) => {
     timer = setTimeout(callback, ms, ...args)
   };
 
+  const cancel = () => {
+    if (timer) clearTimeout(timer);
+    timer = undefined;
+  }
+
   return {
-    cancel: clearTimeout.bind(null, timer),
+    cancel,
     set
   };
 };

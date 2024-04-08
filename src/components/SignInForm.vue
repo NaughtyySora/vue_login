@@ -2,27 +2,30 @@
 import { authApi } from '@/api/auth/api';
 import { bulkValidateForm } from '@/lib/validators';
 import { useToasterStore } from '@/stores/toaster';
+import Form from './Form.vue';
 
-const { successToast, errorToast } = useToasterStore();
+const store = useToasterStore();
 
-const onSubmit = (e: Event & { currentTarget: HTMLFormElement }) => {
-  const data = new FormData(e.currentTarget);
+const onSubmit = (e: Event) => {
+  const data = new FormData(e.target as HTMLFormElement);
   const isValid = bulkValidateForm({ data, options: [{ key: "email" }, { key: "password" }] });
 
   if (!isValid) {
-    errorToast({ content: "Fields are not valid" });
+    store.errorToast({ content: "Fields are not valid" });
     return;
   }
 
-  authApi
-    .singIn(data)
-    .then(() => void successToast({ content: "Sign In Success!" }))
-    .catch(() => void errorToast({ content: "Sign in Error" }));
+  store.successToast({ content: "Sign In Success!" });
+
+  // authApi
+  //   .singIn(data)
+  //   .then(() => void store.successToast({ content: "Sign In Success!" }))
+  //   .catch(() => void store.errorToast({ content: "Sign in Error" }));
 };
 </script>
 
 <template>
-  <Form :$attrs title="Sign in" buttonTitle="Sign In" class="SignIn" @submit.prevent="onSubmit">
+  <Form title="Sign in" buttonTitle="Sign In" class="SignIn" @submit.prevent="onSubmit">
     <p class="SignIn-text">or use your account</p>
     <input class="SignIn-email" type="email" placeholder="Email" name="email" />
     <input class="SignIn-password" type="password" placeholder="Password" name="password" />
@@ -30,8 +33,15 @@ const onSubmit = (e: Event & { currentTarget: HTMLFormElement }) => {
   </Form>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .SignIn {
+  transform: translate(100%);
+  transition: transform .65s;
+
+  &.right {
+    transform: translate(0);
+  }
+
   &-text {
     text-align: center;
     margin-bottom: 0.5rem;
