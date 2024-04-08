@@ -3,7 +3,8 @@
 </script>
 
 <template>
-  <main>
-
-  </main>
+  <div>asd</div>
 </template>
+
+
+<style scoped lang="scss"></style>
